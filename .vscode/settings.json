@@ -1,0 +1,14 @@
+{
+	"files.exclude": {
+		"node_modules": true,
+		"package-lock.json": true
+	},
+	"files.insertFinalNewline": true,
+	"files.associations": {
+		"*.ejs": "html"
+	},
+	"emmet.includeLanguages": {
+		"ejs": "html",
+	},
+	"html.format.templating": true
+}
