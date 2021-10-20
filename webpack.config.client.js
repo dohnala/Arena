@@ -6,7 +6,7 @@ const CopyPlugin = require('copy-webpack-plugin')
 module.exports = {
   name: 'client',
   entry: {
-    client: path.resolve(__dirname, 'client/client.tsx'),
+    client: path.resolve(__dirname, 'client/client.ts'),
   },
   mode: 'production',
   output: {
@@ -31,6 +31,10 @@ module.exports = {
           configFile: 'tsconfig.client.json',
         },
       },
+      {
+        test: /\.(scss)$/,
+        use: ["style-loader", "css-loader", "postcss-loader", 'sass-loader'],
+      }
     ],
   },
   plugins: [

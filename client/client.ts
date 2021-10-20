@@ -1,16 +1,15 @@
 import 'phaser';
+import 'bootstrap';
+import './scss/main.scss';
+
 import GameScene from "./scenes/GameScene";
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
 	title: "Arena Game",
-    scale: {
-        parent: 'root',
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 1280,
-        height: 720
-    },
+    parent: 'root',
+    width: window.innerWidth,
+    height: window.innerHeight,
     backgroundColor: '#282828',
 };
 
