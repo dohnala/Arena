@@ -1,6 +1,7 @@
 const path = require('path')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   name: 'client',
@@ -17,6 +18,10 @@ module.exports = {
     extensions: ['.ts', '.tsx', '.js'],
   },
   target: 'web',
+  externals: {
+		phaser: 'Phaser'
+	},
+  devtool: "source-map",
   module: {
     rules: [
       {
@@ -28,5 +33,11 @@ module.exports = {
       },
     ],
   },
-  plugins: [new CleanWebpackPlugin(), new WebpackManifestPlugin()],
+  plugins: [
+    new CleanWebpackPlugin(), 
+    new WebpackManifestPlugin(),
+    new CopyPlugin({
+      patterns: [{ from: './node_modules/phaser/dist/phaser.min.js', to: 'lib'}],
+    }),
+  ],
 }

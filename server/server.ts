@@ -1,9 +1,6 @@
 import express from 'express'
 import fs from 'fs'
 import path from 'path'
-import React from 'react'
-import ReactDOMServer from 'react-dom/server'
-import { App } from '../client/app'
 
 const server = express()
 const port = process.env.PORT || 3000
@@ -20,8 +17,7 @@ const manifest = fs.readFileSync(
 const assets = JSON.parse(manifest)
 
 server.get('/', (req, res) => {
-  const component = ReactDOMServer.renderToString(React.createElement(App))
-  res.render('client', { assets, component })
+  res.render('index', { assets })
 })
 
 server.listen(port, () => {
