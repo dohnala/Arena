@@ -6,6 +6,7 @@
   "scripts": {
     "build:server": "webpack --config webpack.config.server.js",
     "build:client": "webpack --config webpack.config.client.js",
+    "build": "npm run build:server && npm run build:client",
     "start": "node ./dist/server.js"
   },
   "author": "Adam Dohnal",
