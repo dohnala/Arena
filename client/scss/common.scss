@@ -23,3 +23,14 @@ html {
 .ls-2 {
     letter-spacing: 2px;
 }
+
+// Buttons
+.btn-primary {
+    @include button-variant($primary, $primary);
+    color: $body-color;   
+}
+
+// Tables
+.table-sm {
+    font-size: 0.8rem;
+}

@@ -1,3 +1,6 @@
 @import "variables";
-@import "common";
+
 @import "../../node_modules/bootstrap/scss/bootstrap";
+
+@import "common";
+@import "components/leader-board.scss";

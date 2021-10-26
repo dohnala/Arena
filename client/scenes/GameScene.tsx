@@ -1,5 +1,7 @@
 import React from 'react'
 import ReactDOM from "react-dom";
+import { LeaderBoard } from '../components/LeaderBoard';
+import { leaderBoardService } from '../services/LeaderBoardService';
 
 export default class GameScene extends Phaser.Scene {
 
@@ -12,7 +14,11 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	public createOverlay(): void {
-		const overlay = (<div></div>);
+		const overlay = (
+			<div>
+			  <LeaderBoard leaderboardObservable={leaderBoardService.getLeaderBoard()}/>
+			</div>
+		  );
 
 		ReactDOM.render(overlay, document.getElementById('overlay'));	
 	}

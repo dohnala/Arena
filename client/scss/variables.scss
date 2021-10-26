@@ -1,18 +1,37 @@
+// Colors
+$gray: #5b5b5b;
+$gray-light: lighten($gray, 10%);
+$gray-dark: darken($gray, 10%);
+$gray-darker: darken($gray, 20%);
+
+$green: #3a813d;
+$green-light: lighten($green, 20%);
+
+$white: #eee;
+$white-dark: darken($white, 30%);
+
 // Base
-$body-bg: #5b5b5b;
-$body-color: #fff;
-$font-family-base: Roboto,sans-serif;
+$body-bg: $gray;
+$body-color: $white;
+$font-family-base: Roboto, sans-serif;
+$min-contrast-ratio: 2.5;
+$border-color: $body-bg;
 
 // Cards
-$card-bg: darken($body-bg, 10%);
+$card-bg: $gray-darker;
 $card-border-width: 0;
 
 // Inputs
-$input-bg: $body-bg;
+$input-bg: $gray-dark;
 $input-color: $body-color;
 $input-border-width: 0;
 $input-focus-box-shadow: none;
-$input-placeholder-color: darken($body-color, 40%);
+$input-placeholder-color: $white-dark;
 
 // Primary button
-$primary: #3a813d;
+$primary: $green;
+$primary-light: $green-light;
+
+// Tables
+$table-cell-padding-x-sm: 0.1rem;
+$table-cell-padding-y-sm: 0.1rem;

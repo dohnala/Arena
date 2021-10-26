@@ -1,0 +1,26 @@
+#leader-board {
+    pointer-events: none;   
+    user-select: none;
+
+    tr.current-player {
+        color: $primary-light;
+    }
+
+    tr.border-top {
+        border-top: 1px solid $border-color;    
+    }
+
+    .rank {
+        padding-left: 0.3rem;
+        padding-right: 0.8rem;
+    }
+
+    .name {
+        min-width: 10rem;
+        max-width: 10rem;
+    }
+
+    .score {
+        padding-right: 0.3rem;    
+    }
+}

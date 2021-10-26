@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from "react-dom";
 import { LoginForm } from '../components/LoginForm'
+import { playerService } from '../services/PlayerService';
 import GameScene from './GameScene';
 
 export default class LoginScene extends Phaser.Scene {
@@ -24,7 +25,7 @@ export default class LoginScene extends Phaser.Scene {
 	}
 
 	public login(nick: string): void {
-		// TODO: do the login logic
+		playerService.login(nick);
 
 		this.scene.start(GameScene.Name);
 	}
