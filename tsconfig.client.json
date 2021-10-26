@@ -9,8 +9,6 @@
       "allowSyntheticDefaultImports": true,
       "forceConsistentCasingInFileNames": true,
       "skipLibCheck": true,
-      "strict": true,
-      "strictNullChecks": true,
       "noImplicitAny": true
     }
   }

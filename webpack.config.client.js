@@ -6,7 +6,7 @@ const CopyPlugin = require('copy-webpack-plugin')
 module.exports = {
   name: 'client',
   entry: {
-    client: path.resolve(__dirname, 'client/client.ts'),
+    client: path.resolve(__dirname, 'client/Client.ts'),
   },
   mode: 'production',
   output: {
@@ -41,7 +41,10 @@ module.exports = {
     new CleanWebpackPlugin(), 
     new WebpackManifestPlugin(),
     new CopyPlugin({
-      patterns: [{ from: './node_modules/phaser/dist/phaser.min.js', to: 'lib'}],
+      patterns: [
+        { from: './node_modules/phaser/dist/phaser.min.js', to: 'lib'}, 
+        { from: './client/assets', to: 'assets' }
+      ],
     }),
   ],
 }
