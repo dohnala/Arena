@@ -1,5 +1,5 @@
 {
-    "include": ["client"],
+    "include": ["client", "node_modules/phaser3-rex-plugins-types"],
     "compilerOptions": {
       "module": "es6", 
       "target": "es5",

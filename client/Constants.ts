@@ -6,6 +6,8 @@ export const colors = {
     lightBlue: "#408cfd",
     red: 0xdc3545,
     lightRed: "#e4606d",
+    green: 0x3a813d,
+    lightGreen: 0x429345,
 } as const;
 
 export const grid = {
@@ -16,7 +18,7 @@ export const grid = {
 export const unit = {
     // appereance
     radius: 32,
-    innerRadius: 24,  
+    innerRadius: 20,  
     outlineColor: colors.grayDark,
     nameColor: colors.white,
     playerColor: colors.blue,
@@ -26,7 +28,8 @@ export const unit = {
     nameOffsetY: -14,
     nameFont: "14px Arial",
     levelFont: "bold 32px Arial",
-
+    healthBarRadius: 28,
+    healthBarThickness: 0.14,
     // physics
     maxVelocity: 300,
     drag: 300,
@@ -49,4 +52,4 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
             debug: false,
         }
     },
-} as const;
+};
