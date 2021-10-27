@@ -5,7 +5,7 @@ type Props = {
 };
 
 type State = {
-   nick: string;
+    nick: string;
 };
 
 export class LoginForm extends React.Component<Props, State> {

@@ -13,7 +13,9 @@ $white-dark: darken($white, 30%);
 // Base
 $body-bg: $gray;
 $body-color: $white;
-$font-family-base: Roboto, sans-serif;
+$font-family-base: 'Roboto Mono', monospace;
+$font-family-monospace: 'Roboto Mono', monospace;
+$small-font-size: 0.875rem;
 $min-contrast-ratio: 2.5;
 $border-color: $body-bg;
 

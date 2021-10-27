@@ -24,7 +24,7 @@ export const unit = {
     enemyPlayerColor: colors.red,
     enemyPlayerLevelColor: colors.lightRed,
     nameOffsetY: -14,
-    nameFont: "16px Arial",
+    nameFont: "14px Arial",
     levelFont: "bold 32px Arial",
 
     // physics

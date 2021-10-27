@@ -24,6 +24,12 @@ html {
     letter-spacing: 2px;
 }
 
+// Overlay
+.overlay {
+    pointer-events: none;   
+    user-select: none;
+}
+
 // Buttons
 .btn-primary {
     @include button-variant($primary, $primary);
@@ -32,7 +38,7 @@ html {
 
 // Tables
 .table-sm {
-    font-size: 0.8rem;
+    @include font-size($small-font-size);
 }
 
 // Cards

@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from "react-dom";
+import { Keybindings } from '../components/Keybindings';
 import { LeaderBoard } from '../components/LeaderBoard';
 import { EnemyPlayerUnit } from '../objects/EnemyPlayerUnit';
 import { PlayerUnit } from '../objects/PlayerUnit';
@@ -48,7 +49,8 @@ export default class GameScene extends Phaser.Scene {
 	createOverlay(): void {
 		const overlay = (
 			<div>
-			  <LeaderBoard leaderboardObservable={leaderBoardService.getLeaderBoard()}/>
+                <Keybindings/>
+			    <LeaderBoard leaderboardObservable={leaderBoardService.getLeaderBoard()}/>
 			</div>
 		  );
 

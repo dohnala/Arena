@@ -44,7 +44,7 @@ export class LeaderBoard extends React.Component<Props, LeaderBoardState> {
         const currentPlayer = this.state.currentPlayer;
 
         return ( 
-        <div id="leader-board" className="position-absolute top-0 end-0 card card-transparent mt-2 me-2 p-1">
+        <div id="leader-board" className="overlay position-absolute top-0 end-0 card card-transparent mt-2 me-2 p-1">
             <table className="table table-borderless table-sm mb-0" cellSpacing="0">
                 <thead>
                     <tr>
