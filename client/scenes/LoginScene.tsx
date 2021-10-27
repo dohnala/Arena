@@ -15,15 +15,15 @@ export default class LoginScene extends Phaser.Scene {
 	public createOverlay(): void {
 		const overlay = (
 			<div>
-			  <LoginForm onLogin={(nick: string) => this.login(nick)}/>
+			  <LoginForm onLogin={(name: string) => this.login(name)}/>
 			</div>
 		  );
 
 		ReactDOM.render(overlay, document.getElementById('overlay'));	
 	}
 
-	public login(nick: string): void {
-		playerService.login(nick);
+	public login(name: string): void {
+		playerService.login(name);
 
 		this.scene.start(GameScene.Name);
 	}

@@ -14,8 +14,8 @@ export class LeaderBoard extends React.Component<Props, LeaderBoardState> {
     }
 
     state =  {
-        top5: [{id: 1, rank: 1, nick: "", score: 0}],
-        currentPlayer: {id: 1, rank: 1, nick: "", score: 0},
+        top5: [{id: 1, rank: 1, name: "", score: 0}],
+        currentPlayer: {id: 1, rank: 1, name: "", score: 0},
     };
 
     public isCurrentPlayer(player: LeaderBoardPlayerState): boolean {
@@ -36,7 +36,7 @@ export class LeaderBoard extends React.Component<Props, LeaderBoardState> {
         const leaderboardRows = this.state.top5.map((player) =>
             <tr key={player.id} className={`${this.isCurrentPlayer(player) ? "current-player" : ""}`}>
                 <td className="rank"><div className="text-start">{player.rank}</div></td>
-                <td className="name"><div className="text-truncate">{player.nick}</div></td>
+                <td className="name"><div className="text-truncate">{player.name}</div></td>
                 <td className="score"><div className="text-end">{player.score}</div></td>
             </tr>      
         );    
@@ -58,7 +58,7 @@ export class LeaderBoard extends React.Component<Props, LeaderBoardState> {
                     {currentPlayer.rank > 5 && 
                         <tr key={currentPlayer.id} className="current-player border-top">
                             <td className="rank"><div className="text-start">{currentPlayer.rank}</div></td>
-                            <td className="name"><div className="text-truncate">{currentPlayer.nick}</div></td>
+                            <td className="name"><div className="text-truncate">{currentPlayer.name}</div></td>
                             <td className="score"><div className="text-end">{currentPlayer.score}</div></td>
                         </tr>     
                     }
