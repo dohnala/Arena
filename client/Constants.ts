@@ -1,3 +1,5 @@
+import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugin'
+
 export const colors = {
     white: "#eee",
     gray: "#5b5b5b",
@@ -8,6 +10,10 @@ export const colors = {
     lightRed: "#e4606d",
     green: 0x3a813d,
     lightGreen: 0x429345,
+} as const;
+
+export const fonts = {
+    base: "Roboto Mono",
 } as const;
 
 export const grid = {
@@ -26,8 +32,8 @@ export const unit = {
     enemyPlayerColor: colors.red,
     enemyPlayerLevelColor: colors.lightRed,
     nameOffsetY: -14,
-    nameFont: "14px Arial",
-    levelFont: "bold 32px Arial",
+    nameFontStyle: "14px " + fonts.base,
+    levelFontStyle: "bold 32px " + fonts.base,
     healthBarRadius: 28,
     healthBarThickness: 0.14,
     // physics
@@ -52,4 +58,12 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
             debug: false,
         }
     },
+    plugins: {
+        global: [{
+            key: 'rexWebFontLoader',
+            plugin: WebFontLoaderPlugin,
+            start: true
+        },
+        ]
+    }
 };

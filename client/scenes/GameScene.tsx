@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from "react-dom";
 import { Keybindings } from '../components/Keybindings';
 import { LeaderBoard } from '../components/LeaderBoard';
+import { fonts } from '../Constants';
 import { EnemyPlayerUnit } from '../objects/EnemyPlayerUnit';
 import { PlayerUnit } from '../objects/PlayerUnit';
 import { leaderBoardService } from '../services/LeaderBoardService';
@@ -15,6 +16,13 @@ export default class GameScene extends Phaser.Scene {
 
     preload(): void {
         this.load.pack('preload', './assets/pack.json', 'preload');
+
+        //@ts-ignore
+        this.load.rexWebFont({
+            google: {
+                families: [fonts.base]
+            },
+        });
     }
 
 	create(): void {

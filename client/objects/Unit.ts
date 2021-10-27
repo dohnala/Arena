@@ -29,7 +29,7 @@ export abstract class Unit extends Phaser.GameObjects.Container {
         }
         
         if (showLevel) {
-            this.add(this.levelText);
+           this.add(this.levelText);
         }
 
         this.scene.add.existing(this);
@@ -64,14 +64,14 @@ export abstract class Unit extends Phaser.GameObjects.Container {
 
     private createNameText(): void {
         this.unitNameText = new Phaser.GameObjects.Text(this.scene, unit.radius, unit.nameOffsetY, this.unitName, {
-            font: unit.nameFont,
+            font: unit.nameFontStyle,
             color: unit.nameColor,
         }).setOrigin(0.5);
     }
 
     private createLevelText(levelColor: string): void {
         this.levelText = new Phaser.GameObjects.Text(this.scene, unit.radius, unit.radius, this.level.toString(), {
-            font: unit.levelFont,
+            font: unit.levelFontStyle,
             color: levelColor,
         }).setOrigin(0.5);
     }

@@ -8,7 +8,7 @@ export class PlayerUnit extends Unit {
     private downKey: Phaser.Input.Keyboard.Key;
 
     constructor(scene: Phaser.Scene, name: string, x: number, y: number) {
-        super(scene, name, x, y, unit.playerColor, unit.playerLevelColor, false, true);
+        super(scene, name, x, y, unit.playerColor, unit.playerLevelColor, false, false);
 
         this.scene.physics.world.enable(this);
 
