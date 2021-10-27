@@ -34,3 +34,8 @@ html {
 .table-sm {
     font-size: 0.8rem;
 }
+
+// Cards
+.card-transparent {
+   background-color: rgba($color: $card-bg, $alpha: 0.75);
+}
