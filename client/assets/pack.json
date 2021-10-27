@@ -1,11 +1,7 @@
 {
     "preload": {
       "files": [
-        {
-          "type": "image",
-          "key": "player",
-          "url": "./assets/images/circle.png"
-        }
+        
       ]
     }
   }

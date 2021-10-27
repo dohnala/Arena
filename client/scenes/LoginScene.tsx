@@ -9,8 +9,6 @@ export default class LoginScene extends Phaser.Scene {
 	public static Name = "LoginScene";
 
 	public create(): void {
-        console.log((new Date()).toISOString() + " : LoginScene::create");
-
 		this.createOverlay();
 	}
 
