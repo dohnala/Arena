@@ -2,7 +2,8 @@ import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugi
 
 export const colors = {
     white: "#eee",
-    gray: "#5b5b5b",
+    gray: 0x5b5b5b,
+    grayLight: 0x747474,
     grayDark: 0x414141,
     blue: 0x0d6efd,
     lightBlue: "#408cfd",
@@ -45,7 +46,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 	type: Phaser.CANVAS,
 	title: "Arena Game",
     parent: 'root',
-    backgroundColor: colors.gray,
+    backgroundColor: "#747474",
     roundPixels: true,
     scale: {
         parent: 'root',

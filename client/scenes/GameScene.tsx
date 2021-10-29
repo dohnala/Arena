@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from "react-dom";
 import { Keybindings } from '../components/Keybindings';
 import { LeaderBoard } from '../components/LeaderBoard';
-import { fonts } from '../Constants';
+import { colors, fonts } from '../Constants';
 import { EnemyPlayerUnit } from '../objects/EnemyPlayerUnit';
 import { PlayerUnit } from '../objects/PlayerUnit';
 import { leaderBoardService } from '../services/LeaderBoardService';
@@ -26,6 +26,11 @@ export default class GameScene extends Phaser.Scene {
     }
 
 	create(): void {
+        this.add.grid(0, 0, 4096, 4096, 64, 64, colors.gray);
+
+        this.cameras.main.setBounds(-1024, -1024, 2048, 2048); 
+        this.physics.world.setBounds(-1024, -1024, 2048, 2048);
+
         this.enemyPlayers = this.physics.add.group();
 
         this.spawnPlayer("Angmar", 300, 300);
@@ -35,9 +40,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.cameras.main.setRoundPixels(true);
 
-        //this.cameras.main.setBounds(0, 0, 2*1024, 2*1024); 
-        //this.cameras.main.startFollow(this.player, true, 0.09, 0.09);
-        //this.cameras.main.setZoom(1);
+        this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
 
         this.createOverlay();
 	}
