@@ -1,11 +1,21 @@
 import React from 'react'
 import ReactDOM from "react-dom";
+import { Subscription } from 'rxjs';
+import { Message, PlayerJoined, PlayerLeft } from '../../server/Messages';
+import { LeaderBoard, Player, World } from '../../server/Types';
 import { Keybindings } from '../components/Keybindings';
-import { LeaderBoard } from '../components/LeaderBoard';
-import { colors, fonts } from '../Constants';
+import { LeaderBoardTable } from '../components/LeaderBoardTable';
+import { fonts, grid } from '../Constants';
 import { EnemyPlayerUnit } from '../objects/EnemyPlayerUnit';
 import { PlayerUnit } from '../objects/PlayerUnit';
-import { leaderBoardService } from '../services/LeaderBoardService';
+import { socketService } from '../services/SocketService';
+
+export interface GameData {
+    world: World;
+    player: Player;
+    enemies: Player[];
+    leaderBoard: LeaderBoard
+}
 
 export default class GameScene extends Phaser.Scene {
 
@@ -13,6 +23,9 @@ export default class GameScene extends Phaser.Scene {
     
     private player: PlayerUnit;
     private enemyPlayers: Phaser.Physics.Arcade.Group;
+
+    private playerJoinedSubscription: Subscription;
+    private playerLeftSubscription: Subscription;
 
     preload(): void {
         this.load.pack('preload', './assets/pack.json', 'preload');
@@ -25,43 +38,75 @@ export default class GameScene extends Phaser.Scene {
         });
     }
 
-	create(): void {
-        this.add.grid(0, 0, 4096, 4096, 64, 64, colors.gray);
+	create(data: GameData): void {
+        this.createWorld(data.world);
 
-        this.cameras.main.setBounds(-1024, -1024, 2048, 2048); 
-        this.physics.world.setBounds(-1024, -1024, 2048, 2048);
-
-        this.enemyPlayers = this.physics.add.group();
-
-        this.spawnPlayer("Angmar", 300, 300);
-        this.spawnEnemy("Nullpointer", 600, 600);
-
+        this.spawnPlayer(data.player);
+        this.spawnEnemies(data.enemies);
+        
         this.physics.add.collider(this.player, this.enemyPlayers);
 
-        this.cameras.main.setRoundPixels(true);
+        this.createOverlay(data.leaderBoard);
 
-        this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
+        this.playerJoinedSubscription = socketService.onMessage<PlayerJoined>(Message.PLAYER_JOINED)
+            .subscribe(m => this.spawnEnemy(m.player));
 
-        this.createOverlay();
+        this.playerLeftSubscription = socketService.onMessage<PlayerLeft>(Message.PLAYER_LEFT)
+            .subscribe(m => this.removeEnemy(m.id));
+
+        this.events.on('shutdown', this.shutdown, this)
 	}
 
-    spawnPlayer(name: string, x: number, y: number): void {
-        this.player = new PlayerUnit(this, name, x, y);     
+    shutdown(): void {
+        this.playerJoinedSubscription.unsubscribe();
+        this.playerLeftSubscription.unsubscribe();
     }
 
-    spawnEnemy(name: string, x: number, y: number): void {
-        new EnemyPlayerUnit(this, name, x, y, this.enemyPlayers);
+    createWorld(world: World): void {
+        this.add.grid(0, 0, 2 * world.bounds.width, 2 * world.bounds.height, grid.cellSize, grid.cellSize, grid.color);
+
+        this.cameras.main.setBounds(world.bounds.x, world.bounds.y, world.bounds.width, world.bounds.height); 
+        this.physics.world.setBounds(world.bounds.x,world.bounds.y, world.bounds.width, world.bounds.height);
+
+        this.cameras.main.setRoundPixels(true);
+    }
+
+    spawnPlayer(player: Player): void {
+        this.player = new PlayerUnit(this, player.id, player.name, player.x, player.y);     
+
+        this.cameras.main.setPosition(player.x, player.y);
+        this.cameras.main.startFollow(this.player, true, 0.05, 0.05); 
+    }
+
+    spawnEnemies(enemies: Player[]): void {
+        this.enemyPlayers = this.physics.add.group();
+
+        enemies.forEach(enemy => this.spawnEnemy(enemy));
+    }
+
+    spawnEnemy(enemy: Player): void {
+        new EnemyPlayerUnit(this, enemy.id, enemy.name, enemy.x, enemy.y, this.enemyPlayers);    
+    }
+
+    removeEnemy(enemyId: string): void {
+        (this.enemyPlayers.getChildren() as EnemyPlayerUnit[]).forEach(enemy => {
+            if (enemy.id === enemyId) {
+                enemy.destroy();
+            }
+        });
     }
 
     update(): void {
         this.player.update();
     }
 
-	createOverlay(): void {
+	createOverlay(leaderBoard: LeaderBoard): void {
 		const overlay = (
 			<div>
                 <Keybindings/>
-			    <LeaderBoard leaderboardObservable={leaderBoardService.getLeaderBoard()}/>
+			    <LeaderBoardTable 
+                    leaderBoard={leaderBoard} 
+                    leaderboardObservable={socketService.onMessage<LeaderBoard>(Message.LEADER_BOARD_CHANGED)}/>
 			</div>
 		  );
 

@@ -1,8 +1,8 @@
 import CircularProgress from 'phaser3-rex-plugins/plugins/circularprogress'
-import { colors, unit } from "../Constants";
+import { colors, depth, unit } from "../Constants";
 
 export abstract class Unit extends Phaser.GameObjects.Container {
-    body: Phaser.Physics.Arcade.Body;
+    private _id: string;
 
     private unitName: string;
     private unitNameText: Phaser.GameObjects.Text;
@@ -14,9 +14,11 @@ export abstract class Unit extends Phaser.GameObjects.Container {
     private maxHealth: number;
     private healthBar: CircularProgress;
 
-    constructor(scene: Phaser.Scene, name: string, x: number, y: number, color: number, levelColor: string, showName: boolean, showLevel: boolean) {        
+    constructor(scene: Phaser.Scene, id: string, name: string, x: number, y: number, color: number, levelColor: string, 
+        showName: boolean, showLevel: boolean) {        
         super(scene, x, y, []);
 
+        this._id = id;
         this.unitName = name;
         this.level = 1;
         this.health = 10;
@@ -33,6 +35,10 @@ export abstract class Unit extends Phaser.GameObjects.Container {
         }
 
         this.scene.add.existing(this);
+    }
+
+    get id(): string {
+        return this._id;
     }
 
     public setLevel(level: number): void {
@@ -66,14 +72,14 @@ export abstract class Unit extends Phaser.GameObjects.Container {
         this.unitNameText = new Phaser.GameObjects.Text(this.scene, unit.radius, unit.nameOffsetY, this.unitName, {
             font: unit.nameFontStyle,
             color: unit.nameColor,
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(depth.ui);
     }
 
     private createLevelText(levelColor: string): void {
         this.levelText = new Phaser.GameObjects.Text(this.scene, unit.radius, unit.radius, this.level.toString(), {
             font: unit.levelFontStyle,
             color: levelColor,
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(depth.ui);
     }
 
     private createHealthBar(): void {

@@ -18,7 +18,7 @@ export const fonts = {
 } as const;
 
 export const grid = {
-    color: colors.grayDark,
+    color: colors.gray,
     cellSize: 64,
 } as const;
 
@@ -40,6 +40,11 @@ export const unit = {
     // physics
     maxVelocity: 300,
     drag: 300,
+} as const;
+
+export const depth = {
+    default: 0,
+    ui: 5,
 } as const;
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {

@@ -1,7 +1,8 @@
 import React from 'react'
 import ReactDOM from "react-dom";
+import { LoginSuccessful, Message } from '../../server/Messages';
 import { LoginForm } from '../components/LoginForm'
-import { playerService } from '../services/PlayerService';
+import { socketService } from '../services/SocketService';
 import GameScene from './GameScene';
 
 export default class LoginScene extends Phaser.Scene {
@@ -9,6 +10,16 @@ export default class LoginScene extends Phaser.Scene {
 	public static Name = "LoginScene";
 
 	public create(): void {
+		const subscription = socketService.onMessage<LoginSuccessful>(Message.LOGIN_SUCCESSFUL).subscribe(m => {
+			subscription.unsubscribe();
+			this.scene.start(GameScene.Name, {
+				world: m.world,
+				player: m.player,
+				enemies: m.enemies,
+				leaderBoard: m.leaderBoard,
+			});	
+		});
+
 		this.createOverlay();
 	}
 
@@ -23,8 +34,6 @@ export default class LoginScene extends Phaser.Scene {
 	}
 
 	public login(name: string): void {
-		playerService.login(name);
-
-		this.scene.start(GameScene.Name);
+		socketService.send(Message.LOGIN, {name: name ? name : "Unnamed"});
 	}
 }

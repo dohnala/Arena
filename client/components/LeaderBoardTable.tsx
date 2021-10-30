@@ -1,25 +1,23 @@
 import React from 'react'
 import { Observable, Subscription } from 'rxjs';
-import { LeaderBoardPlayerState, LeaderBoardState } from '../services/LeaderBoardService';
+import { LeaderBoard, LeaderBoardItem } from '../../server/Types';
 
 export type Props = {
-    leaderboardObservable: Observable<LeaderBoardState>;    
+    leaderBoard: LeaderBoard;
+    leaderboardObservable: Observable<LeaderBoard>;    
 };
 
-export class LeaderBoard extends React.Component<Props, LeaderBoardState> {
+export class LeaderBoardTable extends React.Component<Props, LeaderBoard> {
     subscription: Subscription = Subscription.EMPTY;
     
     constructor(props: Props) {
         super(props);
+
+        this.state = this.props.leaderBoard;
     }
 
-    state =  {
-        top5: [{id: 1, rank: 1, name: "", score: 0}],
-        currentPlayer: {id: 1, rank: 1, name: "", score: 0},
-    };
-
-    public isCurrentPlayer(player: LeaderBoardPlayerState): boolean {
-        return player.id === this.state.currentPlayer.id;
+    public isCurrentPlayer(player: LeaderBoardItem): boolean {
+        return player.id === this.state.player.id;
     }
 
     componentDidMount() {
@@ -33,7 +31,7 @@ export class LeaderBoard extends React.Component<Props, LeaderBoardState> {
     }
 
     render() {
-        const leaderboardRows = this.state.top5.map((player) =>
+        const leaderboardRows = this.state.top.map((player) =>
             <tr key={player.id} className={`${this.isCurrentPlayer(player) ? "current-player" : ""}`}>
                 <td className="rank"><div className="text-start">{player.rank}</div></td>
                 <td className="name"><div className="text-truncate">{player.name}</div></td>
@@ -41,7 +39,7 @@ export class LeaderBoard extends React.Component<Props, LeaderBoardState> {
             </tr>      
         );    
 
-        const currentPlayer = this.state.currentPlayer;
+        const player = this.state.player;
 
         return ( 
         <div id="leader-board" className="overlay position-absolute top-0 end-0 card card-transparent mt-2 me-2 p-1">
@@ -55,11 +53,11 @@ export class LeaderBoard extends React.Component<Props, LeaderBoardState> {
                 </thead>
                 <tbody>
                     {leaderboardRows}
-                    {currentPlayer.rank > 5 && 
-                        <tr key={currentPlayer.id} className="current-player border-top">
-                            <td className="rank"><div className="text-start">{currentPlayer.rank}</div></td>
-                            <td className="name"><div className="text-truncate">{currentPlayer.name}</div></td>
-                            <td className="score"><div className="text-end">{currentPlayer.score}</div></td>
+                    {player.rank > 5 && 
+                        <tr key={player.id} className="current-player border-top">
+                            <td className="rank"><div className="text-start">{player.rank}</div></td>
+                            <td className="name"><div className="text-truncate">{player.name}</div></td>
+                            <td className="score"><div className="text-end">{player.score}</div></td>
                         </tr>     
                     }
                 </tbody>
