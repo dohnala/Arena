@@ -5,6 +5,7 @@ import './scss/main.scss';
 import LoginScene from "./scenes/LoginScene";
 import GameScene from "./scenes/GameScene";
 import { gameConfig } from './Constants';
+import { socketService } from './services/SocketService';
 
 export default class Game extends Phaser.Game {
 	constructor(config: Phaser.Types.Core.GameConfig) {
@@ -18,4 +19,5 @@ export default class Game extends Phaser.Game {
 
 window.onload = (): void => {
 	const game = new Game(gameConfig);
+	socketService.init();
 };
