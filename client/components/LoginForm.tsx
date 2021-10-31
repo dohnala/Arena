@@ -28,7 +28,7 @@ export class LoginForm extends React.Component<Props, State> {
     render() {
         return ( 
         <div className="position-absolute top-50 start-50 translate-middle card text-center p-4">
-            <h1>Arena.io</h1>
+            <h1>Circles.io</h1>
             <form onSubmit={this.handleSubmit}>
                 <div className="form-group mb-2">
                     <input 
