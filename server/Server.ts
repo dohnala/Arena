@@ -3,7 +3,7 @@ import socketIo, { Socket } from 'socket.io';
 import http from "http";
 import fs from 'fs'
 import path from 'path'
-import { Login, Message } from "./Messages";
+import { Login, Message, PlayerPositionChanged } from "./Messages";
 import { Room } from "./Room";
 import { LeaderBoardItem } from "./Types";
 
@@ -85,6 +85,13 @@ class Server {
                         });   
                     }
                 }
+            });
+
+            socket.on(Message.PLAYER_POSITION_CHANGED, (m: PlayerPositionChanged) => {
+                //console.log('[received][%s][playerPositionChanged]: %s', socket.id, JSON.stringify(m));
+
+                this.room.updatePosition(socket.id, m.x, m.y);
+                socket.broadcast.emit(Message.PLAYER_POSITION_CHANGED, m);
             });
       
             socket.on(Message.DISCONNECT, () => {

@@ -3,7 +3,7 @@ import { Unit } from "./Unit";
 
 export class PlayerUnit extends Unit {
     body: Phaser.Physics.Arcade.Body;
-    
+
     private rightKey: Phaser.Input.Keyboard.Key;
     private leftKey: Phaser.Input.Keyboard.Key;
     private topKey: Phaser.Input.Keyboard.Key;
@@ -30,6 +30,8 @@ export class PlayerUnit extends Unit {
     }
 
     update(): void {
+        super.update();
+        
         if (this.rightKey.isDown) {
             this.body.setVelocityX(unit.maxVelocity);
         } else if (this.leftKey.isDown) {

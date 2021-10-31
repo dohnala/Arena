@@ -10,7 +10,6 @@ export class EnemyPlayerUnit extends Unit {
         group.add(this);
 
         // collisions
-        this.body.immovable = true
         this.body.setCircle(unit.radius);
     }
 }

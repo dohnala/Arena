@@ -10,13 +10,14 @@ class SocketService {
     }
 
     public send(message: Message, data: any): void {
-        console.log('[sent][%s][%s]: %s', this.socket.id, message, JSON.stringify(data));
+        //console.log('[sent][%s][%s]: %s', this.socket.id, message, JSON.stringify(data));
         this.socket.emit(message, data);
     }
 
     public onMessage<T>(message: Message): Observable<T> {
-        return fromEvent(this.socket, message).pipe(tap(data => 
-            console.log('[received][%s][%s]: %s', this.socket.id, message, JSON.stringify(data))));
+        return fromEvent(this.socket, message).pipe(tap(data => {
+            //console.log('[received][%s][%s]: %s', this.socket.id, message, JSON.stringify(data))
+        }));
       }
 }
 

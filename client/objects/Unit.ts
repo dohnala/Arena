@@ -1,5 +1,11 @@
 import CircularProgress from 'phaser3-rex-plugins/plugins/circularprogress'
+import { BehaviorSubject, distinctUntilChanged, Observable, Subject } from 'rxjs';
 import { colors, depth, unit } from "../Constants";
+
+export interface Position {
+    x: number;
+    y: number;
+}
 
 export abstract class Unit extends Phaser.GameObjects.Container {
     private _id: string;
@@ -14,6 +20,8 @@ export abstract class Unit extends Phaser.GameObjects.Container {
     private maxHealth: number;
     private healthBar: CircularProgress;
 
+    private positionSubject: BehaviorSubject<Position>;
+
     constructor(scene: Phaser.Scene, id: string, name: string, x: number, y: number, color: number, levelColor: string, 
         showName: boolean, showLevel: boolean) {        
         super(scene, x, y, []);
@@ -23,6 +31,7 @@ export abstract class Unit extends Phaser.GameObjects.Container {
         this.level = 1;
         this.health = 10;
         this.maxHealth = 10;
+        this.positionSubject = new BehaviorSubject<Position>({x: x, y: y});
 
         this.createShape(color, levelColor);
 
@@ -39,6 +48,14 @@ export abstract class Unit extends Phaser.GameObjects.Container {
 
     get id(): string {
         return this._id;
+    }
+
+    get positionObservable(): Observable<Position> {
+        return this.positionSubject.pipe(distinctUntilChanged((prev, curr) => prev.x === curr.x && prev.y === curr.y));
+    }
+
+    update(): void {
+        this.positionSubject.next({x: this.x, y: this.y});
     }
 
     public setLevel(level: number): void {

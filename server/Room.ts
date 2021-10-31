@@ -27,6 +27,11 @@ export class Room {
         delete this.players[id];
     }
 
+    public updatePosition(id: string, x: number, y: number): void {
+        this.players[id].x = x;
+        this.players[id].y = y;
+    }
+
     public getEnemies(id: string): Player[] {
         let enemies: Player[] = [];
 

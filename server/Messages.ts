@@ -11,6 +11,8 @@ export enum Message {
     PLAYER_LEFT = "playerLeft",
 
     LEADER_BOARD_CHANGED = "leaderBoardChanged",
+
+    PLAYER_POSITION_CHANGED = "playerPositionChanged",
 }
   
 export interface Login {
@@ -30,5 +32,11 @@ export interface PlayerJoined {
 
 export interface PlayerLeft {
     id: string;
+}
+
+export interface PlayerPositionChanged {
+    id: string;
+    x: number;
+    y: number;
 }
   
