@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import { leaderBoardSize } from "./Constants";
 import { Message, PlayerPositionChanged } from "./Messages";
-import { Bounds, LeaderBoard, LeaderBoardItem, Player } from "./Types";
+import { Bounds, LeaderBoard, LeaderBoardItem, Player, Position } from "./Types";
 
 export class World {
     private bounds: Bounds;
@@ -22,8 +22,7 @@ export class World {
             id: socket.id,
             name: name,
             score: 0,
-            x: 0,
-            y: 0
+            position: this.randomPosition()
         };     
 
         this.sockets[socket.id] = socket;
@@ -53,38 +52,27 @@ export class World {
         this.addMessageHandlers(socket);
     }
 
+    public removePlayer(id: string): void {
+        delete this.players[id];
+        delete this.sockets[id];
+
+        const leaderBoardItems = this.getLeaderBoardItems();
+
+        for (let socketId in this.sockets) {
+            this.sockets[socketId].emit(Message.PLAYER_LEFT, {id: id});
+            this.sockets[socketId].emit(Message.LEADER_BOARD_CHANGED, {
+                top: leaderBoardItems.slice(0, leaderBoardSize),
+                player: leaderBoardItems.find((item: LeaderBoardItem) => item.id === socketId)     
+            });   
+        }
+    }
+
     addMessageHandlers(socket: Socket) {
         // Player position changed
         socket.on(Message.PLAYER_POSITION_CHANGED, (m: PlayerPositionChanged) => {
-            this.updatePosition(socket.id, m.x, m.y);
+            this.players[socket.id].position = m.position;
             socket.broadcast.emit(Message.PLAYER_POSITION_CHANGED, m);
         });
-  
-        // Player disconnected
-        socket.on(Message.DISCONNECT, () => {
-            console.log('[received][%s][disconnect]', socket.id);
-
-            this.removePlayer(socket.id);
-
-            const leaderBoardItems = this.getLeaderBoardItems();
-
-            for (let socketId in this.sockets) {
-                this.sockets[socketId].emit(Message.PLAYER_LEFT, {id: socket.id});
-                this.sockets[socketId].emit(Message.LEADER_BOARD_CHANGED, {
-                    top: leaderBoardItems.slice(0, leaderBoardSize),
-                    player: leaderBoardItems.find((item: LeaderBoardItem) => item.id === socketId)     
-                });   
-            }
-        });
-    }
-
-    removePlayer(id: string): void {
-        delete this.players[id];
-    }
-
-    updatePosition(id: string, x: number, y: number): void {
-        this.players[id].x = x;
-        this.players[id].y = y;
     }
 
     getEnemies(id: string): Player[] {
@@ -118,5 +106,12 @@ export class World {
                     score: player.score
                 }
             });
+    }
+
+    randomPosition(): Position {
+        return {
+            x: this.bounds.position.x + Math.floor(Math.random() * this.bounds.width),
+            y: this.bounds.position.y + Math.floor(Math.random() * this.bounds.height)
+        };
     }
 }

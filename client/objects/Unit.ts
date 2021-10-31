@@ -1,11 +1,7 @@
 import CircularProgress from 'phaser3-rex-plugins/plugins/circularprogress'
-import { BehaviorSubject, distinctUntilChanged, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
+import { Position } from '../../server/Types';
 import { colors, depth, unit } from "../Constants";
-
-export interface Position {
-    x: number;
-    y: number;
-}
 
 export abstract class Unit extends Phaser.GameObjects.Container {
     private _id: string;
@@ -22,16 +18,16 @@ export abstract class Unit extends Phaser.GameObjects.Container {
 
     private positionSubject: BehaviorSubject<Position>;
 
-    constructor(scene: Phaser.Scene, id: string, name: string, x: number, y: number, color: number, levelColor: string, 
+    constructor(scene: Phaser.Scene, id: string, name: string, position: Position, color: number, levelColor: string, 
         showName: boolean, showLevel: boolean) {        
-        super(scene, x, y, []);
+        super(scene, position.x, position.y, []);
 
         this._id = id;
         this.unitName = name;
         this.level = 1;
         this.health = 10;
         this.maxHealth = 10;
-        this.positionSubject = new BehaviorSubject<Position>({x: x, y: y});
+        this.positionSubject = new BehaviorSubject<Position>(position);
 
         this.createShape(color, levelColor);
 

@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from "react-dom";
 import { Subscription } from 'rxjs';
 import { Message, PlayerJoined, PlayerLeft, PlayerPositionChanged } from '../../server/Messages';
-import { LeaderBoard, Player, World } from '../../server/Types';
+import { LeaderBoard, Player, Position, World } from '../../server/Types';
 import { Keybindings } from '../components/Keybindings';
 import { LeaderBoardTable } from '../components/LeaderBoardTable';
 import { fonts, grid } from '../Constants';
@@ -56,7 +56,7 @@ export default class GameScene extends Phaser.Scene {
             .subscribe(m => this.removeEnemy(m.id));
 
         this.playerPositionChangedSubscription = socketService.onMessage<PlayerPositionChanged>(Message.PLAYER_POSITION_CHANGED)
-            .subscribe(m => this.updateEnemyPosition(m.id, m.x, m.y));
+            .subscribe(m => this.updateEnemyPosition(m.id, m.position));
 
         this.events.on('shutdown', this.shutdown, this)
 	}
@@ -70,23 +70,30 @@ export default class GameScene extends Phaser.Scene {
     createWorld(world: World): void {
         this.add.grid(0, 0, 2 * world.bounds.width, 2 * world.bounds.height, grid.cellSize, grid.cellSize, grid.color);
 
-        this.cameras.main.setBounds(world.bounds.x, world.bounds.y, world.bounds.width, world.bounds.height); 
-        this.physics.world.setBounds(world.bounds.x,world.bounds.y, world.bounds.width, world.bounds.height);
+        this.cameras.main.setBounds(
+            world.bounds.position.x, 
+            world.bounds.position.y, 
+            world.bounds.width, 
+            world.bounds.height); 
+
+        this.physics.world.setBounds(
+            world.bounds.position.x, 
+            world.bounds.position.y,
+            world.bounds.width, 
+            world.bounds.height);
 
         this.cameras.main.setRoundPixels(true);
     }
 
     spawnPlayer(player: Player): void {
-        this.player = new PlayerUnit(this, player.id, player.name, player.x, player.y);     
+        this.player = new PlayerUnit(this, player.id, player.name, player.position);     
 
         this.player.positionObservable.subscribe(position => 
             socketService.send(Message.PLAYER_POSITION_CHANGED, {
                 id: player.id,
-                x: position.x,
-                y: position.y
+                position: position
             }));
 
-        this.cameras.main.setPosition(player.x, player.y);
         this.cameras.main.startFollow(this.player, true, 0.05, 0.05); 
     }
 
@@ -97,13 +104,13 @@ export default class GameScene extends Phaser.Scene {
     }
 
     spawnEnemy(enemy: Player): void {
-        new EnemyPlayerUnit(this, enemy.id, enemy.name, enemy.x, enemy.y, this.enemyPlayers);    
+        new EnemyPlayerUnit(this, enemy.id, enemy.name, enemy.position, this.enemyPlayers);    
     }
 
-    updateEnemyPosition(enemyId: string, x: number, y: number): void {
+    updateEnemyPosition(enemyId: string, position: Position): void {
         (this.enemyPlayers.getChildren() as EnemyPlayerUnit[]).forEach(enemy => {
             if (enemy.id === enemyId) {
-                enemy.setPosition(x, y);
+                enemy.setPosition(position.x, position.y);
             }
         });    
     }

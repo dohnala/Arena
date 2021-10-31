@@ -1,3 +1,4 @@
+import { Position } from "../../server/Types";
 import { unit } from "../Constants";
 import { Unit } from "./Unit";
 
@@ -9,8 +10,8 @@ export class PlayerUnit extends Unit {
     private topKey: Phaser.Input.Keyboard.Key;
     private downKey: Phaser.Input.Keyboard.Key;
 
-    constructor(scene: Phaser.Scene, id: string, name: string, x: number, y: number) {
-        super(scene, id, name, x, y, unit.playerColor, unit.playerLevelColor, false, false);
+    constructor(scene: Phaser.Scene, id: string, name: string, position: Position) {
+        super(scene, id, name, position, unit.playerColor, unit.playerLevelColor, false, false);
 
         this.scene.physics.world.enable(this);
 

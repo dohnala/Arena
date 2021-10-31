@@ -1,6 +1,10 @@
-export interface Bounds {
+export interface Position {
     x: number;
-    y: number;
+    y: number;    
+}
+
+export interface Bounds {
+    position: Position;
     width: number;
     height: number
 }
@@ -13,8 +17,7 @@ export interface Player {
     id: string;
     name: string;
     score: number;
-    x: number;
-    y: number;
+    position: Position;
 }
 
 export interface LeaderBoardItem {

@@ -62,6 +62,12 @@ class Server {
               
                 this.world.spawnPlayer(socket, m.name);
             });
+
+            socket.on(Message.DISCONNECT, () => {
+                console.log('[received][%s][disconnect]', socket.id);
+
+                this.world.removePlayer(socket.id);
+            });
         });
     }
 

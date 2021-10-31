@@ -1,4 +1,4 @@
-import { LeaderBoard, Player, World } from "./Types";
+import { LeaderBoard, Player, Position, World } from "./Types";
 
 export enum Message {
     CONNECT = 'connect',
@@ -36,7 +36,6 @@ export interface PlayerLeft {
 
 export interface PlayerPositionChanged {
     id: string;
-    x: number;
-    y: number;
+    position: Position;
 }
   
