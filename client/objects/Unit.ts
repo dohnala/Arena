@@ -86,8 +86,8 @@ export abstract class Unit extends Phaser.GameObjects.Container {
     private createShape(): void {
         // background
         this.add(new Phaser.GameObjects.Ellipse(this.scene, 
-            this.settings.radius, 
-            this.settings.radius, 
+            0, 
+            0, 
             this.settings.radius * 2, 
             this.settings.radius * 2, 
             this.settings.backgroundColor));  
@@ -97,8 +97,8 @@ export abstract class Unit extends Phaser.GameObjects.Container {
 
         // inner color
         this.add(new Phaser.GameObjects.Ellipse(this.scene, 
-            this.settings.radius, 
-            this.settings.radius,
+            0, 
+            0,
             this.settings.innerRadius * 2, 
             this.settings.innerRadius * 2, 
             this.settings.color));
@@ -108,7 +108,7 @@ export abstract class Unit extends Phaser.GameObjects.Container {
     }
 
     private createNameText(): void {
-        this.unitNameText = new Phaser.GameObjects.Text(this.scene, this.settings.radius, this.settings.nameOffsetY, this.info.name, {
+        this.unitNameText = new Phaser.GameObjects.Text(this.scene, 0, this.settings.nameOffsetY, this.info.name, {
             font: this.settings.nameFontStyle,
             color: colorToString(this.settings.nameColor),
         }).setOrigin(0.5).setDepth(depth.ui);
@@ -120,7 +120,8 @@ export abstract class Unit extends Phaser.GameObjects.Container {
 
     private createHealthBar(): void {
         this.healthBar = new CircularProgress(this.scene, 
-            this.settings.radius, this.settings.radius, 
+            0, 
+            0, 
             this.settings.healthBarRadius, 
             this.settings.healthBarColor, 
             this.info.health / this.info.maxHealth)

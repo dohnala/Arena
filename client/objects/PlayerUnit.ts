@@ -16,7 +16,7 @@ export class PlayerUnit extends Unit {
         this.scene.physics.world.enable(this);
 
         // collisions
-        this.body.setCircle(this.settings.radius);
+        this.body.setCircle(this.settings.radius, -this.settings.radius, -this.settings.radius);
         this.body.setCollideWorldBounds(true);
 
         // physics

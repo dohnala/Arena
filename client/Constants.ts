@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugin'
+import GlowFilterPipelinePlugin from 'phaser3-rex-plugins/plugins/glowfilterpipeline-plugin';
+import { CollectibleSettings } from './objects/Collectible';
 import { UnitSettings } from './objects/Unit';
 
 export const colors = {
@@ -17,6 +19,8 @@ export const colors = {
    
     green: 0x3a813d,
     greenLight: 0x429345,
+
+    yellow: 0xffc107,
 } as const;
 
 export const colorToString = (color: number) => {
@@ -68,13 +72,21 @@ export const enemyPlayerUnitSettings: UnitSettings = {
     healthBarColor: colors.greenLight,
 } as const;
 
+export const collectibleSettings: CollectibleSettings = {
+    radius: 6,
+    color: colors.yellow,
+    glowDuration: 1000,
+    glowIntensityFrom: 0.005,
+    glowIntensityTo: 0.02,
+} as const;
+
 export const depth = {
     default: 0,
     ui: 5,
 } as const;
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
-	type: Phaser.CANVAS,
+	type: Phaser.AUTO,
 	title: "Arena Game",
     parent: 'root',
     backgroundColor: "#747474",
@@ -96,6 +108,10 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
             plugin: WebFontLoaderPlugin,
             start: true
         },
-        ]
+        {
+            key: 'rexGlowFilterPipeline',
+            plugin: GlowFilterPipelinePlugin,
+            start: true
+        }]
     }
 };

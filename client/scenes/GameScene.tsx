@@ -6,7 +6,8 @@ import { Message, PlayerJoined, PlayerLeft, PlayerPositionChanged } from '../../
 import { LeaderBoard, Player, Position, World } from '../../server/Types';
 import { Keybindings } from '../components/Keybindings';
 import { LeaderBoardTable } from '../components/LeaderBoardTable';
-import { fonts, grid } from '../Constants';
+import { collectibleSettings, fonts, grid } from '../Constants';
+import { Collectible } from '../objects/Collectible';
 import { EnemyPlayerUnit } from '../objects/EnemyPlayerUnit';
 import { PlayerUnit } from '../objects/PlayerUnit';
 import { socketService } from '../services/SocketService';
@@ -24,6 +25,7 @@ export default class GameScene extends Phaser.Scene {
     
     private player: PlayerUnit;
     private enemyPlayers: Phaser.Physics.Arcade.Group;
+    private collectibles: Phaser.Physics.Arcade.Group;
 
     private playerJoinedSubscription: Subscription;
     private playerLeftSubscription: Subscription;
@@ -45,8 +47,14 @@ export default class GameScene extends Phaser.Scene {
 
         this.spawnPlayer(data.player);
         this.spawnEnemies(data.enemies);
+        this.spawnCollectibles();
         
         this.physics.add.collider(this.player, this.enemyPlayers);
+
+        this.physics.add.overlap(this.player, this.collectibles, (_, collectible) => {
+            // TODO: send message that the collectible is picked up
+            collectible.destroy();
+        });
 
         this.createOverlay(data.leaderBoard);
 
@@ -84,6 +92,9 @@ export default class GameScene extends Phaser.Scene {
             world.bounds.height);
 
         this.cameras.main.setRoundPixels(true);
+
+        this.enemyPlayers = this.physics.add.group();
+        this.collectibles = this.physics.add.group();
     }
 
     spawnPlayer(player: Player): void {
@@ -99,8 +110,6 @@ export default class GameScene extends Phaser.Scene {
     }
 
     spawnEnemies(enemies: Player[]): void {
-        this.enemyPlayers = this.physics.add.group();
-
         enemies.forEach(enemy => this.spawnEnemy(enemy));
     }
 
@@ -122,6 +131,22 @@ export default class GameScene extends Phaser.Scene {
                 enemy.destroy();
             }
         });
+    }
+
+    spawnCollectibles(): void {
+        this.spawnCollectible("1", {x: 0, y: 0});
+    }
+
+    spawnCollectible(id: string, position: Position): void {
+        new Collectible(this, position, {id: id}, collectibleSettings, this.collectibles);  
+    }
+
+    pickupCollectible(
+        player: Phaser.Types.Physics.Arcade.GameObjectWithBody, 
+        collectible: Phaser.Types.Physics.Arcade.GameObjectWithBody): void {
+
+            this.collectibles.killAndHide(collectible);
+            collectible.body.enable = false;
     }
 
     update(): void {

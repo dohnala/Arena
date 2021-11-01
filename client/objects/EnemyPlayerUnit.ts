@@ -11,6 +11,6 @@ export class EnemyPlayerUnit extends Unit {
         group.add(this);
 
         // collisions
-        this.body.setCircle(this.settings.radius);
+        this.body.setCircle(this.settings.radius, -this.settings.radius, -this.settings.radius);
     }
 }
