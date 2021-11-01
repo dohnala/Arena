@@ -1,16 +1,16 @@
 import { Position } from "../../server/Types";
-import { unit } from "../Constants";
-import { Unit } from "./Unit";
+import { enemyPlayerUnitSettings } from "../Constants";
+import { Unit, UnitInfo } from "./Unit";
 
 export class EnemyPlayerUnit extends Unit {
     body: Phaser.Physics.Arcade.Body;
 
-    constructor(scene: Phaser.Scene, id: string, name: string, position: Position, group?: Phaser.Physics.Arcade.Group) {
-        super(scene, id, name, position, unit.enemyPlayerColor, unit.enemyPlayerLevelColor, true, false);
+    constructor(scene: Phaser.Scene, position: Position, info: UnitInfo, group?: Phaser.Physics.Arcade.Group) {
+        super(scene, position, info, enemyPlayerUnitSettings);
 
         group.add(this);
 
         // collisions
-        this.body.setCircle(unit.radius);
+        this.body.setCircle(this.settings.radius);
     }
 }

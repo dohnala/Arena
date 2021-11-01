@@ -18,6 +18,10 @@ export interface Player {
     name: string;
     score: number;
     position: Position;
+    health: number,
+    maxHealth: number
+    maxVelocity: number,
+    drag: number,
 }
 
 export interface LeaderBoardItem {

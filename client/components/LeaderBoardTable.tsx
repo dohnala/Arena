@@ -3,6 +3,7 @@ import { Observable, Subscription } from 'rxjs';
 import { LeaderBoard, LeaderBoardItem } from '../../server/Types';
 
 export type Props = {
+    size: number;
     leaderBoard: LeaderBoard;
     leaderboardObservable: Observable<LeaderBoard>;    
 };
@@ -53,7 +54,7 @@ export class LeaderBoardTable extends React.Component<Props, LeaderBoard> {
                 </thead>
                 <tbody>
                     {leaderboardRows}
-                    {player.rank > 5 && 
+                    {player.rank > this.props.size && 
                         <tr key={player.id} className="current-player border-top">
                             <td className="rank"><div className="text-start">{player.rank}</div></td>
                             <td className="name"><div className="text-truncate">{player.name}</div></td>

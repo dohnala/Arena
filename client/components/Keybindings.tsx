@@ -3,8 +3,6 @@ import React from 'react'
 export type Props = {};
 export type State = {};
 
-
-
 export class Keybindings extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);

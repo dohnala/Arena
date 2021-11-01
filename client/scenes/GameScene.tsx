@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from "react-dom";
 import { Subscription } from 'rxjs';
+import { leaderBoardSize } from '../../server/Constants';
 import { Message, PlayerJoined, PlayerLeft, PlayerPositionChanged } from '../../server/Messages';
 import { LeaderBoard, Player, Position, World } from '../../server/Types';
 import { Keybindings } from '../components/Keybindings';
@@ -86,7 +87,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     spawnPlayer(player: Player): void {
-        this.player = new PlayerUnit(this, player.id, player.name, player.position);     
+        this.player = new PlayerUnit(this, player.position, player);     
 
         this.player.positionObservable.subscribe(position => 
             socketService.send(Message.PLAYER_POSITION_CHANGED, {
@@ -104,7 +105,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     spawnEnemy(enemy: Player): void {
-        new EnemyPlayerUnit(this, enemy.id, enemy.name, enemy.position, this.enemyPlayers);    
+        new EnemyPlayerUnit(this, enemy.position, enemy, this.enemyPlayers);    
     }
 
     updateEnemyPosition(enemyId: string, position: Position): void {
@@ -132,6 +133,7 @@ export default class GameScene extends Phaser.Scene {
 			<div>
                 <Keybindings/>
 			    <LeaderBoardTable 
+                    size={leaderBoardSize}
                     leaderBoard={leaderBoard} 
                     leaderboardObservable={socketService.onMessage<LeaderBoard>(Message.LEADER_BOARD_CHANGED)}/>
 			</div>

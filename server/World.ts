@@ -21,8 +21,12 @@ export class World {
         this.players[socket.id] = {
             id: socket.id,
             name: name,
+            position: this.randomPosition(),
             score: 0,
-            position: this.randomPosition()
+            health: 10,
+            maxHealth: 10,
+            maxVelocity: 300,
+            drag: 300, 
         };     
 
         this.sockets[socket.id] = socket;

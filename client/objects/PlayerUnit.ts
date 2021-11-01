@@ -1,6 +1,6 @@
 import { Position } from "../../server/Types";
-import { unit } from "../Constants";
-import { Unit } from "./Unit";
+import { playerUnitSettings } from "../Constants";
+import { Unit, UnitInfo } from "./Unit";
 
 export class PlayerUnit extends Unit {
     body: Phaser.Physics.Arcade.Body;
@@ -10,18 +10,18 @@ export class PlayerUnit extends Unit {
     private topKey: Phaser.Input.Keyboard.Key;
     private downKey: Phaser.Input.Keyboard.Key;
 
-    constructor(scene: Phaser.Scene, id: string, name: string, position: Position) {
-        super(scene, id, name, position, unit.playerColor, unit.playerLevelColor, false, false);
+    constructor(scene: Phaser.Scene, position: Position, info: UnitInfo) {
+        super(scene, position, info, playerUnitSettings);
 
         this.scene.physics.world.enable(this);
 
         // collisions
-        this.body.setCircle(unit.radius);
+        this.body.setCircle(this.settings.radius);
         this.body.setCollideWorldBounds(true);
 
         // physics
-        this.body.setMaxVelocity(unit.maxVelocity);
-        this.body.setDrag(unit.drag, unit.drag);
+        this.body.setMaxVelocity(this.info.maxVelocity);
+        this.body.setDrag(this.info.drag, this.info.drag);
 
         // inputs
         this.rightKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -34,15 +34,15 @@ export class PlayerUnit extends Unit {
         super.update();
         
         if (this.rightKey.isDown) {
-            this.body.setVelocityX(unit.maxVelocity);
+            this.body.setVelocityX(this.info.maxVelocity);
         } else if (this.leftKey.isDown) {
-            this.body.setVelocityX(-unit.maxVelocity);
+            this.body.setVelocityX(-this.info.maxVelocity);
         }
 
         if (this.topKey.isDown) {
-            this.body.setVelocityY(-unit.maxVelocity);
+            this.body.setVelocityY(-this.info.maxVelocity);
         } else if (this.downKey.isDown) {
-            this.body.setVelocityY(unit.maxVelocity);
+            this.body.setVelocityY(this.info.maxVelocity);
         }
     }
 }

@@ -1,18 +1,29 @@
 import Phaser from 'phaser';
 import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugin'
+import { UnitSettings } from './objects/Unit';
 
 export const colors = {
-    white: "#eee",
+    white: 0xeeeeee,
+    
     gray: 0x5b5b5b,
     grayLight: 0x747474,
     grayDark: 0x414141,
+    
     blue: 0x0d6efd,
-    lightBlue: "#408cfd",
+    blueLight: 0x408cfd,
+    
     red: 0xdc3545,
-    lightRed: "#e4606d",
+    redLight: 0xe4606d,
+   
     green: 0x3a813d,
-    lightGreen: 0x429345,
+    greenLight: 0x429345,
 } as const;
+
+export const colorToString = (color: number) => {
+    var bbggrr =  ("000000" + color.toString(16)).slice(-6);
+    var rrggbb = bbggrr.substr(4, 2) + bbggrr.substr(2, 2) + bbggrr.substr(0, 2);
+    return "#" + rrggbb;
+};
 
 export const fonts = {
     base: "Roboto Mono",
@@ -23,24 +34,38 @@ export const grid = {
     cellSize: 64,
 } as const;
 
-export const unit = {
-    // appereance
+export const playerUnitSettings: UnitSettings = {
     radius: 32,
-    innerRadius: 20,  
-    outlineColor: colors.grayDark,
+    innerRadius: 20, 
+    color: colors.blue,
+    backgroundColor: colors.grayDark,
+
+    showName: false,
     nameColor: colors.white,
-    playerColor: colors.blue,
-    playerLevelColor: colors.lightBlue,
-    enemyPlayerColor: colors.red,
-    enemyPlayerLevelColor: colors.lightRed,
     nameOffsetY: -14,
     nameFontStyle: "14px " + fonts.base,
-    levelFontStyle: "bold 32px " + fonts.base,
+
+    showHealthBar: true,
     healthBarRadius: 28,
     healthBarThickness: 0.14,
-    // physics
-    maxVelocity: 300,
-    drag: 300,
+    healthBarColor: colors.greenLight,
+} as const;
+
+export const enemyPlayerUnitSettings: UnitSettings = {
+    radius: 32,
+    innerRadius: 20, 
+    color: colors.red,
+    backgroundColor: colors.grayDark,
+
+    showName: true,
+    nameColor: colors.white,
+    nameOffsetY: -14,
+    nameFontStyle: "14px " + fonts.base,
+
+    showHealthBar: true,
+    healthBarRadius: 28,
+    healthBarThickness: 0.14,
+    healthBarColor: colors.greenLight,
 } as const;
 
 export const depth = {

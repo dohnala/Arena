@@ -1,49 +1,73 @@
 import CircularProgress from 'phaser3-rex-plugins/plugins/circularprogress'
 import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
 import { Position } from '../../server/Types';
-import { colors, depth, unit } from "../Constants";
+import { colorToString, depth } from "../Constants";
+
+export interface UnitInfo {
+    id: string,
+    name: string,
+
+    health: number,
+    maxHealth: number
+
+    maxVelocity: number,
+    drag: number,
+}
+
+export interface UnitSettings {
+    // Total radius of the unit
+    radius: number,
+    // Inner radius of the circle
+    innerRadius: number,
+    // Color of the the inner circle
+    color: number,
+    // Background color of the unit
+    backgroundColor: number,
+   
+    // Show unit name on top of the unit
+    showName: boolean,
+    // Y offset of the name position 
+    nameOffsetY: number,
+    // Name color
+    nameColor: number,
+    // Name font style
+    nameFontStyle: string,
+
+    // Show unit health bar
+    showHealthBar: boolean,
+    // Radius of the health bar
+    healthBarRadius: number,
+    // Color of the health bar
+    healthBarColor: number,
+    // Thickness of the health bar
+    healthBarThickness: number,
+}
 
 export abstract class Unit extends Phaser.GameObjects.Container {
-    private _id: string;
 
-    private unitName: string;
+    protected info: UnitInfo;
+    protected settings: UnitSettings;
+
     private unitNameText: Phaser.GameObjects.Text;
 
-    private level: number;
-    private levelText: Phaser.GameObjects.Text;
-
-    private health: number;
-    private maxHealth: number;
     private healthBar: CircularProgress;
 
     private positionSubject: BehaviorSubject<Position>;
 
-    constructor(scene: Phaser.Scene, id: string, name: string, position: Position, color: number, levelColor: string, 
-        showName: boolean, showLevel: boolean) {        
+    constructor(scene: Phaser.Scene, position: Position, info: UnitInfo, settings: UnitSettings) {        
         super(scene, position.x, position.y, []);
 
-        this._id = id;
-        this.unitName = name;
-        this.level = 1;
-        this.health = 10;
-        this.maxHealth = 10;
+        this.info = info;
+        this.settings = settings;
         this.positionSubject = new BehaviorSubject<Position>(position);
 
-        this.createShape(color, levelColor);
-
-        if (showName) {
-            this.add(this.unitNameText);
-        }
-        
-        if (showLevel) {
-           this.add(this.levelText);
-        }
+        this.createShape();
 
         this.scene.add.existing(this);
     }
 
     get id(): string {
-        return this._id;
+        return this.info.id;
     }
 
     get positionObservable(): Observable<Position> {
@@ -54,52 +78,57 @@ export abstract class Unit extends Phaser.GameObjects.Container {
         this.positionSubject.next({x: this.x, y: this.y});
     }
 
-    public setLevel(level: number): void {
-        this.level = level;
-        this.levelText.setText(this.level.toString());
-    }
-
     public takeDamage(damage: number): void {
-        this.health = Math.max(0, this.health - damage);
-        this.healthBar.setValue(this.health / this.maxHealth);
+        this.info.health = Math.max(0, this.info.health - damage);
+        this.healthBar.setValue(this.info.health / this.info.maxHealth);
     }
 
-    private createShape(color: number, levelColor: string): void {
+    private createShape(): void {
         // background
-        this.add(new Phaser.GameObjects.Ellipse(this.scene, unit.radius, unit.radius, unit.radius * 2, unit.radius * 2, unit.outlineColor));  
+        this.add(new Phaser.GameObjects.Ellipse(this.scene, 
+            this.settings.radius, 
+            this.settings.radius, 
+            this.settings.radius * 2, 
+            this.settings.radius * 2, 
+            this.settings.backgroundColor));  
 
         // healthbar
         this.createHealthBar();
 
         // inner color
-        this.add(new Phaser.GameObjects.Ellipse(this.scene, unit.radius, unit.radius, unit.innerRadius * 2, unit.innerRadius * 2, color));
-
-        // level 
-        this.createLevelText(levelColor);
+        this.add(new Phaser.GameObjects.Ellipse(this.scene, 
+            this.settings.radius, 
+            this.settings.radius,
+            this.settings.innerRadius * 2, 
+            this.settings.innerRadius * 2, 
+            this.settings.color));
 
         // name
         this.createNameText();
     }
 
     private createNameText(): void {
-        this.unitNameText = new Phaser.GameObjects.Text(this.scene, unit.radius, unit.nameOffsetY, this.unitName, {
-            font: unit.nameFontStyle,
-            color: unit.nameColor,
+        this.unitNameText = new Phaser.GameObjects.Text(this.scene, this.settings.radius, this.settings.nameOffsetY, this.info.name, {
+            font: this.settings.nameFontStyle,
+            color: colorToString(this.settings.nameColor),
         }).setOrigin(0.5).setDepth(depth.ui);
-    }
 
-    private createLevelText(levelColor: string): void {
-        this.levelText = new Phaser.GameObjects.Text(this.scene, unit.radius, unit.radius, this.level.toString(), {
-            font: unit.levelFontStyle,
-            color: levelColor,
-        }).setOrigin(0.5).setDepth(depth.ui);
+        if (this.settings.showName) {
+            this.add(this.unitNameText);
+        }
     }
 
     private createHealthBar(): void {
-        this.healthBar = new CircularProgress(this.scene, unit.radius, unit.radius, unit.healthBarRadius, colors.lightGreen, this.health / this.maxHealth)
+        this.healthBar = new CircularProgress(this.scene, 
+            this.settings.radius, this.settings.radius, 
+            this.settings.healthBarRadius, 
+            this.settings.healthBarColor, 
+            this.info.health / this.info.maxHealth)
             .setStartAngle(Phaser.Math.DegToRad(90))
-            .setThickness(unit.healthBarThickness);
+            .setThickness(this.settings.healthBarThickness);
 
-        this.add(this.healthBar);
+        if (this.settings.showHealthBar) {
+            this.add(this.healthBar);
+        }
     }
 }
