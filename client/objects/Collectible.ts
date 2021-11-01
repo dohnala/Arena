@@ -7,6 +7,8 @@ export interface CollectibleInfo {
 export interface CollectibleSettings {
     radius: number,
     color: number,
+    outlineThickness: number,
+    outlineAlpha: number
 }
 
 export class Collectible extends Phaser.GameObjects.Container {
@@ -36,13 +38,19 @@ export class Collectible extends Phaser.GameObjects.Container {
     }
 
     private createShape(): void {
-        const circle = new Phaser.GameObjects.Ellipse(this.scene, 
+        this.add(new Phaser.GameObjects.Ellipse(this.scene, 
             0, 
             0, 
-            this.settings.radius * 2, 
-            this.settings.radius * 2, 
-            this.settings.color);
+            (this.settings.radius + this.settings.outlineThickness) * 2, 
+            (this.settings.radius + this.settings.outlineThickness) * 2, 
+            this.settings.color,
+            this.settings.outlineAlpha));
 
-        this.add(circle);  
+        this.add(new Phaser.GameObjects.Ellipse(this.scene, 
+            0, 
+            0, 
+            this.settings.radius * 2, 
+            this.settings.radius * 2, 
+            this.settings.color)); 
     }
 }

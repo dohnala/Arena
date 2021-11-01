@@ -23,6 +23,12 @@ export interface UnitSettings {
     color: number,
     // Background color of the unit
     backgroundColor: number,
+    // Background alpha of the unit
+    backgroundAlpha: number,
+    // Outline thickness of the unit
+    outlineThickness: number,
+    // Outline alpha of the unit
+    outlineAlpha: number,
    
     // Show unit name on top of the unit
     showName: boolean,
@@ -84,13 +90,23 @@ export abstract class Unit extends Phaser.GameObjects.Container {
     }
 
     private createShape(): void {
+        // outline
+        this.add(new Phaser.GameObjects.Ellipse(this.scene, 
+            0, 
+            0, 
+            (this.settings.radius + this.settings.outlineThickness) * 2, 
+            (this.settings.radius + this.settings.outlineThickness) * 2, 
+            this.settings.color,
+            this.settings.outlineAlpha));
+
         // background
         this.add(new Phaser.GameObjects.Ellipse(this.scene, 
             0, 
             0, 
             this.settings.radius * 2, 
             this.settings.radius * 2, 
-            this.settings.backgroundColor));  
+            this.settings.backgroundColor,
+            this.settings.backgroundAlpha));  
 
         // healthbar
         this.createHealthBar();

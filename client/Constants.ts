@@ -8,7 +8,7 @@ export const colors = {
     
     gray: 0x4d4d4d,
     grayLight: 0x676767,
-    grayDark: 0x404040,
+    grayDark: 0x333333,
     
     blue: 0x0d6efd,
     blueLight: 0x408cfd,
@@ -29,7 +29,7 @@ export const colorToString = (color: number) => {
 };
 
 export const fonts = {
-    base: "Roboto Mono",
+    base: "Roboto",
 } as const;
 
 export const grid = {
@@ -42,10 +42,13 @@ export const playerUnitSettings: UnitSettings = {
     innerRadius: 20, 
     color: colors.blue,
     backgroundColor: colors.grayDark,
+    backgroundAlpha: 0.6,
+    outlineThickness: 8,
+    outlineAlpha: 0.2,
 
     showName: false,
     nameColor: colors.white,
-    nameOffsetY: -14 - 32,
+    nameOffsetY: -50,
     nameFontStyle: "14px " + fonts.base,
 
     showHealthBar: true,
@@ -59,10 +62,13 @@ export const enemyPlayerUnitSettings: UnitSettings = {
     innerRadius: 20, 
     color: colors.red,
     backgroundColor: colors.grayDark,
+    backgroundAlpha: 0.6,
+    outlineThickness: 8,
+    outlineAlpha: 0.2,
 
     showName: true,
     nameColor: colors.white,
-    nameOffsetY: -14 - 32,
+    nameOffsetY: -50,
     nameFontStyle: "14px " + fonts.base,
 
     showHealthBar: true,
@@ -74,6 +80,8 @@ export const enemyPlayerUnitSettings: UnitSettings = {
 export const collectibleSettings: CollectibleSettings = {
     radius: 6,
     color: colors.yellow,
+    outlineThickness: 6,
+    outlineAlpha: 0.2
 } as const;
 
 export const depth = {
