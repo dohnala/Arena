@@ -1,15 +1,14 @@
 import Phaser from 'phaser';
 import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugin'
-import GlowFilterPipelinePlugin from 'phaser3-rex-plugins/plugins/glowfilterpipeline-plugin';
 import { CollectibleSettings } from './objects/Collectible';
 import { UnitSettings } from './objects/Unit';
 
 export const colors = {
     white: 0xeeeeee,
     
-    gray: 0x5b5b5b,
-    grayLight: 0x747474,
-    grayDark: 0x414141,
+    gray: 0x4d4d4d,
+    grayLight: 0x676767,
+    grayDark: 0x404040,
     
     blue: 0x0d6efd,
     blueLight: 0x408cfd,
@@ -46,7 +45,7 @@ export const playerUnitSettings: UnitSettings = {
 
     showName: false,
     nameColor: colors.white,
-    nameOffsetY: -14,
+    nameOffsetY: -14 - 32,
     nameFontStyle: "14px " + fonts.base,
 
     showHealthBar: true,
@@ -63,7 +62,7 @@ export const enemyPlayerUnitSettings: UnitSettings = {
 
     showName: true,
     nameColor: colors.white,
-    nameOffsetY: -14,
+    nameOffsetY: -14 - 32,
     nameFontStyle: "14px " + fonts.base,
 
     showHealthBar: true,
@@ -75,9 +74,6 @@ export const enemyPlayerUnitSettings: UnitSettings = {
 export const collectibleSettings: CollectibleSettings = {
     radius: 6,
     color: colors.yellow,
-    glowDuration: 1000,
-    glowIntensityFrom: 0.005,
-    glowIntensityTo: 0.02,
 } as const;
 
 export const depth = {
@@ -86,10 +82,10 @@ export const depth = {
 } as const;
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
-	type: Phaser.AUTO,
+	type: Phaser.CANVAS,
 	title: "Arena Game",
     parent: 'root',
-    backgroundColor: "#747474",
+    backgroundColor: colors.gray,
     roundPixels: true,
     scale: {
         parent: 'root',
@@ -106,11 +102,6 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
         global: [{
             key: 'rexWebFontLoader',
             plugin: WebFontLoaderPlugin,
-            start: true
-        },
-        {
-            key: 'rexGlowFilterPipeline',
-            plugin: GlowFilterPipelinePlugin,
             start: true
         }]
     }

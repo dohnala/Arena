@@ -6,7 +6,7 @@ import { Message, PlayerJoined, PlayerLeft, PlayerPositionChanged } from '../../
 import { LeaderBoard, Player, Position, World } from '../../server/Types';
 import { Keybindings } from '../components/Keybindings';
 import { LeaderBoardTable } from '../components/LeaderBoardTable';
-import { collectibleSettings, fonts, grid } from '../Constants';
+import { collectibleSettings, fonts } from '../Constants';
 import { Collectible } from '../objects/Collectible';
 import { EnemyPlayerUnit } from '../objects/EnemyPlayerUnit';
 import { PlayerUnit } from '../objects/PlayerUnit';
@@ -77,7 +77,8 @@ export default class GameScene extends Phaser.Scene {
     }
 
     createWorld(world: World): void {
-        this.add.grid(0, 0, 2 * world.bounds.width, 2 * world.bounds.height, grid.cellSize, grid.cellSize, grid.color);
+        //this.add.grid(0, 0, 2 * world.bounds.width, 2 * world.bounds.height, grid.cellSize, grid.cellSize, grid.color);
+        this.add.tileSprite(0, 0, 2 * world.bounds.width, 2 * world.bounds.height, "gridCell");
 
         this.cameras.main.setBounds(
             world.bounds.position.x, 

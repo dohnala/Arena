@@ -7,9 +7,6 @@ export interface CollectibleInfo {
 export interface CollectibleSettings {
     radius: number,
     color: number,
-    glowDuration: number,
-    glowIntensityFrom: number,
-    glowIntensityTo: number,
 }
 
 export class Collectible extends Phaser.GameObjects.Container {
@@ -47,20 +44,5 @@ export class Collectible extends Phaser.GameObjects.Container {
             this.settings.color);
 
         this.add(circle);  
-
-        //@ts-ignore
-        const pipeline = this.scene.plugins.get('rexGlowFilterPipeline').add(circle);
-
-        this.scene.tweens.add({
-            targets: pipeline,
-            intensity: { 
-                from: this.settings.glowIntensityFrom, 
-                to: this.settings.glowIntensityTo 
-            },
-            ease: 'Linear',
-            duration: this.settings.glowDuration,
-            repeat: -1,
-            yoyo: true
-        });
     }
 }

@@ -1,6 +1,11 @@
 {
     "preload": {
         "files": [
+            {
+                "type": "image",
+                "key": "gridCell",
+                "url": "assets/images/grid-cell.png"
+            }
         ]
     }
   }
