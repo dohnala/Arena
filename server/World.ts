@@ -66,12 +66,7 @@ export class World {
 
         socket.broadcast.emit(Message.PLAYER_JOINED, {player: player});
 
-        for (let socketId in this.sockets) {
-            this.sockets[socketId].emit(Message.LEADER_BOARD_CHANGED, {
-                top: leaderBoardItems.slice(0, leaderBoardSize),
-                player: leaderBoardItems.find((item: LeaderBoardItem) => item.id === socketId)     
-            });   
-        }
+        this.updateLeaderBoard();
 
         this.addMessageHandlers(socket);
     }
@@ -80,15 +75,9 @@ export class World {
         delete this.players[id];
         delete this.sockets[id];
 
-        const leaderBoardItems = this.getLeaderBoardItems();
+        this.io.emit(Message.PLAYER_LEFT, {id: id});
 
-        for (let socketId in this.sockets) {
-            this.sockets[socketId].emit(Message.PLAYER_LEFT, {id: id});
-            this.sockets[socketId].emit(Message.LEADER_BOARD_CHANGED, {
-                top: leaderBoardItems.slice(0, leaderBoardSize),
-                player: leaderBoardItems.find((item: LeaderBoardItem) => item.id === socketId)     
-            });   
-        }
+        this.updateLeaderBoard();
     }
 
     spawnCollectible(broadcastMessage: boolean = false): void {
@@ -114,12 +103,35 @@ export class World {
 
         // Collectible picked up
         socket.on(Message.COLLECTIBLE_PICKED_UP, (m: CollectiblePickedUp) => {
-            delete this.collectibles[m.collectibleId];
-            socket.broadcast.emit(Message.COLLECTIBLE_PICKED_UP, m);
+            const collectible = this.collectibles[m.collectibleId];
 
-            // Spawn new collectible
-            this.spawnCollectible(true);
+            if (collectible) {
+                this.addPoints(m.playerId, collectible.points);
+
+                delete this.collectibles[m.collectibleId];
+                socket.broadcast.emit(Message.COLLECTIBLE_PICKED_UP, m);
+
+                // Spawn new collectible
+                this.spawnCollectible(true);
+            }
         });
+    }
+
+    addPoints(playerId: string, points: number): void {
+        this.players[playerId].score += points;
+
+        this.updateLeaderBoard();
+    }
+
+    updateLeaderBoard(): void {
+        const leaderBoardItems = this.getLeaderBoardItems();
+
+        for (let socketId in this.sockets) {
+            this.sockets[socketId].emit(Message.LEADER_BOARD_CHANGED, {
+                top: leaderBoardItems.slice(0, leaderBoardSize),
+                player: leaderBoardItems.find((item: LeaderBoardItem) => item.id === socketId)     
+            });   
+        }
     }
 
     getEnemies(id: string): Player[] {
@@ -137,7 +149,7 @@ export class World {
     getLeaderBoardItems(): LeaderBoardItem[] {
         return Object.values(this.players)
             .sort((p1, p2) => {
-                let byScore = p1.score - p2.score;
+                let byScore = p2.score - p1.score;
 
                 if (byScore === 0) {
                     return p1.name.localeCompare(p2.name);
