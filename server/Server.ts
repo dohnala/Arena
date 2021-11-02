@@ -5,7 +5,7 @@ import fs from 'fs'
 import path from 'path'
 import { Login, Message } from "./Messages";
 import { World } from "./World";
-import { worldBounds } from "./Constants";
+import { worldSettings } from "./Configuration";
 
 class Server {
     public static readonly PORT: number = 3000;
@@ -27,7 +27,7 @@ class Server {
         this.server = http.createServer(this._app);
         this.io = new socketIo.Server(this.server);
         
-        this.world = new World(worldBounds);
+        this.world = new World(this.io, worldSettings);
 
         this.listen();
     }

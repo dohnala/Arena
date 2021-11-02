@@ -2,22 +2,15 @@ import React from 'react'
 import ReactDOM from "react-dom";
 import { Subscription } from 'rxjs';
 import { leaderBoardSize } from '../../server/Constants';
-import { Message, PlayerJoined, PlayerLeft, PlayerPositionChanged } from '../../server/Messages';
-import { LeaderBoard, Player, Position, World } from '../../server/Types';
+import { CollectiblePickedUp, CollectibleSpawned, Message, PlayerJoined, PlayerLeft, PlayerPositionChanged } from '../../server/Messages';
+import { Bounds, Collectible, LeaderBoard, Player, Position, World } from '../../server/Types';
 import { Keybindings } from '../components/Keybindings';
 import { LeaderBoardTable } from '../components/LeaderBoardTable';
 import { collectibleSettings, fonts } from '../Constants';
-import { Collectible } from '../objects/Collectible';
+import { CollectibleObject } from '../objects/CollectibleObject';
 import { EnemyPlayerUnit } from '../objects/EnemyPlayerUnit';
 import { PlayerUnit } from '../objects/PlayerUnit';
 import { socketService } from '../services/SocketService';
-
-export interface GameData {
-    world: World;
-    player: Player;
-    enemies: Player[];
-    leaderBoard: LeaderBoard
-}
 
 export default class GameScene extends Phaser.Scene {
 
@@ -30,6 +23,8 @@ export default class GameScene extends Phaser.Scene {
     private playerJoinedSubscription: Subscription;
     private playerLeftSubscription: Subscription;
     private playerPositionChangedSubscription: Subscription;
+    private collectibleSpawnedSubscription: Subscription;
+    private collectiblePickedUpSubscription: Subscription;
 
     preload(): void {
         this.load.pack('preload', './assets/pack.json', 'preload');
@@ -42,22 +37,15 @@ export default class GameScene extends Phaser.Scene {
         });
     }
 
-	create(data: GameData): void {
-        this.createWorld(data.world);
+	create(world: World): void {
+        this.createWorld(world);
 
-        this.spawnPlayer(data.player);
-        this.spawnEnemies(data.enemies);
-        this.spawnCollectibles();
-        
-        this.physics.add.collider(this.player, this.enemyPlayers);
+        this.createOverlay(world.leaderBoard);
 
-        this.physics.add.overlap(this.player, this.collectibles, (_, collectible) => {
-            // TODO: send message that the collectible is picked up
-            collectible.destroy();
-        });
+        this.subscribe();
+	}
 
-        this.createOverlay(data.leaderBoard);
-
+    subscribe(): void {
         this.playerJoinedSubscription = socketService.onMessage<PlayerJoined>(Message.PLAYER_JOINED)
             .subscribe(m => this.spawnEnemy(m.player));
 
@@ -67,17 +55,24 @@ export default class GameScene extends Phaser.Scene {
         this.playerPositionChangedSubscription = socketService.onMessage<PlayerPositionChanged>(Message.PLAYER_POSITION_CHANGED)
             .subscribe(m => this.updateEnemyPosition(m.id, m.position));
 
+        this.collectibleSpawnedSubscription = socketService.onMessage<CollectibleSpawned>(Message.COLLECTIBLE_SPAWNED)
+            .subscribe(m => this.spawnCollectible(m.collectible));
+
+        this.collectiblePickedUpSubscription = socketService.onMessage<CollectiblePickedUp>(Message.COLLECTIBLE_PICKED_UP)
+            .subscribe(m => this.removeCollectible(m.collectibleId));
+
         this.events.on('shutdown', this.shutdown, this)
-	}
+    }
 
     shutdown(): void {
         this.playerJoinedSubscription.unsubscribe();
         this.playerLeftSubscription.unsubscribe();
         this.playerPositionChangedSubscription.unsubscribe();
+        this.collectibleSpawnedSubscription.unsubscribe();
+        this.collectiblePickedUpSubscription.unsubscribe();
     }
 
     createWorld(world: World): void {
-        //this.add.grid(0, 0, 2 * world.bounds.width, 2 * world.bounds.height, grid.cellSize, grid.cellSize, grid.color);
         this.add.tileSprite(0, 0, 2 * world.bounds.width, 2 * world.bounds.height, "gridCell");
 
         this.cameras.main.setBounds(
@@ -96,6 +91,22 @@ export default class GameScene extends Phaser.Scene {
 
         this.enemyPlayers = this.physics.add.group();
         this.collectibles = this.physics.add.group();
+
+        this.spawnPlayer(world.player);
+        this.spawnEnemies(world.enemies);
+        this.spawnCollectibles(world.collectibles);
+        
+        this.setupCollisions();
+    }
+
+    setupCollisions(): void {
+        this.physics.add.collider(this.player, this.enemyPlayers);
+
+        this.physics.add.overlap(this.player, this.collectibles, (_, collectible) => {
+            //@ts-ignore
+            socketService.send(Message.COLLECTIBLE_PICKED_UP, {playerId: this.player.id, collectibleId: collectible.id});
+            collectible.destroy();
+        });
     }
 
     spawnPlayer(player: Player): void {
@@ -134,20 +145,20 @@ export default class GameScene extends Phaser.Scene {
         });
     }
 
-    spawnCollectibles(): void {
-        this.spawnCollectible("1", {x: 0, y: 0});
+    spawnCollectibles(collectibles: Collectible[]): void {
+        collectibles.forEach(collectible => this.spawnCollectible(collectible));
     }
 
-    spawnCollectible(id: string, position: Position): void {
-        new Collectible(this, position, {id: id}, collectibleSettings, this.collectibles);  
+    spawnCollectible(collectible: Collectible): void {
+        new CollectibleObject(this, collectible.position, collectible, collectibleSettings, this.collectibles);  
     }
 
-    pickupCollectible(
-        player: Phaser.Types.Physics.Arcade.GameObjectWithBody, 
-        collectible: Phaser.Types.Physics.Arcade.GameObjectWithBody): void {
-
-            this.collectibles.killAndHide(collectible);
-            collectible.body.enable = false;
+    removeCollectible(collectibleId: string): void {
+        (this.collectibles.getChildren() as CollectibleObject[]).forEach(collectible => {
+            if (collectible.id === collectibleId) {
+                collectible.destroy();
+            }
+        });
     }
 
     update(): void {

@@ -6,11 +6,15 @@ export interface Position {
 export interface Bounds {
     position: Position;
     width: number;
-    height: number
+    height: number;
 }
 
 export interface World {
     bounds: Bounds;
+    player: Player;
+    enemies: Player[];
+    collectibles: Collectible[];
+    leaderBoard: LeaderBoard;
 }
 
 export interface Player {
@@ -18,10 +22,16 @@ export interface Player {
     name: string;
     score: number;
     position: Position;
-    health: number,
-    maxHealth: number
-    maxVelocity: number,
-    drag: number,
+    health: number;
+    maxHealth: number;
+    maxVelocity: number;
+    drag: number;
+}
+
+export interface Collectible {
+    id: string;
+    position: Position;
+    points: number;
 }
 
 export interface LeaderBoardItem {

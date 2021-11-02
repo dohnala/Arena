@@ -1,23 +1,30 @@
 import { Position } from "../../server/Types";
 
-export interface CollectibleInfo {
-    id: string,
+export interface CollectibleObjectInfo {
+    id: string;
+    points: number;
 }
 
-export interface CollectibleSettings {
-    radius: number,
-    color: number,
-    outlineThickness: number,
-    outlineAlpha: number
+export interface CollectibleObjectSettings {
+    radius: number;
+    color: number;
+    outlineThickness: number;
+    outlineAlpha: number;
 }
 
-export class Collectible extends Phaser.GameObjects.Container {
+export class CollectibleObject extends Phaser.GameObjects.Container {
     body: Phaser.Physics.Arcade.Body;
     
-    protected info: CollectibleInfo;
-    protected settings: CollectibleSettings;
+    protected info: CollectibleObjectInfo;
+    protected settings: CollectibleObjectSettings;
 
-    constructor(scene: Phaser.Scene, position: Position, info: CollectibleInfo, settings: CollectibleSettings, group?: Phaser.Physics.Arcade.Group) {        
+    constructor(
+        scene: Phaser.Scene, 
+        position: Position, 
+        info: CollectibleObjectInfo, 
+        settings: CollectibleObjectSettings, 
+        group?: Phaser.Physics.Arcade.Group) { 
+
         super(scene, position.x, position.y, []);
 
         this.info = info;

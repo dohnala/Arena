@@ -1,4 +1,4 @@
-import { LeaderBoard, Player, Position, World } from "./Types";
+import { Collectible, Player, Position, World } from "./Types";
 
 export enum Message {
     CONNECT = 'connect',
@@ -13,6 +13,9 @@ export enum Message {
     LEADER_BOARD_CHANGED = "leaderBoardChanged",
 
     PLAYER_POSITION_CHANGED = "playerPositionChanged",
+
+    COLLECTIBLE_SPAWNED = "collectibleSpawned",
+    COLLECTIBLE_PICKED_UP = "collectiblePickedUp",
 }
   
 export interface Login {
@@ -21,9 +24,6 @@ export interface Login {
   
 export interface LoginSuccessful {
     world: World;
-    player: Player;
-    enemies: Player[];
-    leaderBoard: LeaderBoard;
 }
 
 export interface PlayerJoined {
@@ -37,5 +37,14 @@ export interface PlayerLeft {
 export interface PlayerPositionChanged {
     id: string;
     position: Position;
+}
+
+export interface CollectibleSpawned {
+    collectible: Collectible;
+}
+
+export interface CollectiblePickedUp {
+    playerId: string;
+    collectibleId: string;
 }
   

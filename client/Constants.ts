@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugin'
-import { CollectibleSettings } from './objects/Collectible';
+import { CollectibleObjectSettings } from './objects/CollectibleObject';
 import { UnitSettings } from './objects/Unit';
 
 export const colors = {
@@ -77,7 +77,7 @@ export const enemyPlayerUnitSettings: UnitSettings = {
     healthBarColor: colors.greenLight,
 } as const;
 
-export const collectibleSettings: CollectibleSettings = {
+export const collectibleSettings: CollectibleObjectSettings = {
     radius: 6,
     color: colors.yellow,
     outlineThickness: 6,

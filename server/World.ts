@@ -1,15 +1,32 @@
-import { Socket } from "socket.io";
+import socketIo, { Socket } from 'socket.io';
+import { v4 as uuidv4 } from 'uuid';
 import { leaderBoardSize } from "./Constants";
-import { Message, PlayerPositionChanged } from "./Messages";
-import { Bounds, LeaderBoard, LeaderBoardItem, Player, Position } from "./Types";
+import { CollectiblePickedUp, Message, PlayerPositionChanged } from "./Messages";
+import { Bounds, Collectible, LeaderBoardItem, Player, Position } from "./Types";
+
+export interface WorldSettings {
+    bounds: Bounds;
+    collectibleCount: number;
+    collectiblePoints: number;
+    collectibleSpawnOffset: number;
+    leaderBoardSize: number;
+}
 
 export class World {
-    private bounds: Bounds;
-    private players: {[id: string]: Player} = {};
-    private sockets: {[id: string]: Socket} = {};
+    private io: socketIo.Server;
 
-    constructor(bounds: Bounds) {
-        this.bounds = bounds;
+    private settings: WorldSettings;
+
+    private sockets: {[id: string]: Socket} = {};
+    private players: {[id: string]: Player} = {};
+    private collectibles: {[id: string]: Collectible} = {};
+
+    constructor(io: socketIo.Server, settings: WorldSettings) {
+        this.io = io;
+        this.settings = settings;
+
+        // Spawn collectibles
+        Array.from(Array(this.settings.collectibleCount).keys()).forEach(_ => this.spawnCollectible());
     }
 
     /**
@@ -35,13 +52,16 @@ export class World {
         const leaderBoardItems = this.getLeaderBoardItems();
               
         socket.emit(Message.LOGIN_SUCCESSFUL, {
-            world: { bounds: this.bounds },
-            player: player,
-            enemies: this.getEnemies(socket.id),
-            leaderBoard: {
-                top: leaderBoardItems.slice(0, leaderBoardSize),
-                player: leaderBoardItems.find((item: LeaderBoardItem) => item.id === socket.id)
-            }
+            world: { 
+                bounds: this.settings.bounds,
+                player: player,
+                enemies: this.getEnemies(socket.id),
+                collectibles: Object.values(this.collectibles),
+                leaderBoard: {
+                    top: leaderBoardItems.slice(0, leaderBoardSize),
+                    player: leaderBoardItems.find((item: LeaderBoardItem) => item.id === socket.id)
+                }
+            },
         });
 
         socket.broadcast.emit(Message.PLAYER_JOINED, {player: player});
@@ -71,11 +91,34 @@ export class World {
         }
     }
 
+    spawnCollectible(broadcastMessage: boolean = false): void {
+        const id = uuidv4();    
+
+        this.collectibles[id] = {
+            id: id,
+            position: this.randomPosition(this.settings.collectibleSpawnOffset),
+            points: this.settings.collectiblePoints
+        }
+
+        if (broadcastMessage) {
+            this.io.emit(Message.COLLECTIBLE_SPAWNED, {collectible: this.collectibles[id]});    
+        }
+    }
+
     addMessageHandlers(socket: Socket) {
         // Player position changed
         socket.on(Message.PLAYER_POSITION_CHANGED, (m: PlayerPositionChanged) => {
             this.players[socket.id].position = m.position;
             socket.broadcast.emit(Message.PLAYER_POSITION_CHANGED, m);
+        });
+
+        // Collectible picked up
+        socket.on(Message.COLLECTIBLE_PICKED_UP, (m: CollectiblePickedUp) => {
+            delete this.collectibles[m.collectibleId];
+            socket.broadcast.emit(Message.COLLECTIBLE_PICKED_UP, m);
+
+            // Spawn new collectible
+            this.spawnCollectible(true);
         });
     }
 
@@ -112,10 +155,10 @@ export class World {
             });
     }
 
-    randomPosition(): Position {
+    randomPosition(offset: number = 0): Position {
         return {
-            x: this.bounds.position.x + Math.floor(Math.random() * this.bounds.width),
-            y: this.bounds.position.y + Math.floor(Math.random() * this.bounds.height)
+            x: this.settings.bounds.position.x + offset + Math.floor(Math.random() * (this.settings.bounds.width - 2 * offset)),
+            y: this.settings.bounds.position.y + offset + Math.floor(Math.random() * (this.settings.bounds.height - 2 * offset))
         };
     }
 }

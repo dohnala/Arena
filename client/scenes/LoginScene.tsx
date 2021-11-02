@@ -12,12 +12,7 @@ export default class LoginScene extends Phaser.Scene {
 	public create(): void {
 		const subscription = socketService.onMessage<LoginSuccessful>(Message.LOGIN_SUCCESSFUL).subscribe(m => {
 			subscription.unsubscribe();
-			this.scene.start(GameScene.Name, {
-				world: m.world,
-				player: m.player,
-				enemies: m.enemies,
-				leaderBoard: m.leaderBoard,
-			});	
+			this.scene.start(GameScene.Name, m.world);	
 		});
 
 		this.createOverlay();
